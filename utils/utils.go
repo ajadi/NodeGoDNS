@@ -14,7 +14,6 @@ import (
     "strings"
     "sync"
 
-    "github.com/miekg/dns"
     "github.com/sirupsen/logrus"
     "github.com/ajadi/NodeGoDNS/models"
 )
