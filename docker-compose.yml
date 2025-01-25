@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nodegodns
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  nodegodns:
+    build: .
+    depends_on:
+      - db
+    environment:
+      - DB_TYPE=postgres
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/nodegodns?sslmode=disable
+      - JWT_SECRET=your_secure_jwt_secret
+      - TLS_CERT_FILE=certs/cert.pem
+      - TLS_KEY_FILE=certs/key.pem
+    volumes:
+      - ./zones:/app/zones
+      - ./backups:/app/backups
+      - ./certs:/app/certs
+    ports:
+      - "53:53/udp"
+      - "8443:8443"
+      - "50051:50051"
+
+volumes:
+  db-data:

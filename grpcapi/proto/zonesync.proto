@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package zonesync;
+
+option go_package = "github.com/ajadi/NodeGoDNS/grpcapi/proto;proto";
+
+// ZoneSyncService provides a method to synchronize zones.
+service ZoneSyncService {
+  // SyncZones updates zones on the server from the client.
+  rpc SyncZones (SyncZonesRequest) returns (SyncZonesResponse) {}
+}
+
+// SyncZonesRequest carries a map of zoneName -> Zone data.
+message SyncZonesRequest {
+  map<string, Zone> zones = 1;
+}
+
+// SyncZonesResponse indicates success/failure and a message.
+message SyncZonesResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Zone data structure for gRPC.
+message Zone {
+  SOA soa = 1;
+  repeated string ns = 2;
+  map<string, string> a = 3;
+  map<string, string> aaaa = 4;
+  repeated MX mx = 5;
+  map<string, string> txt = 6;
+  map<string, string> cname = 7;
+  repeated SRV srv = 8;
+  map<string, string> ptr = 9;
+  repeated DNSKEY dnskey = 10;
+}
+
+// SOA record for gRPC.
+message SOA {
+  string mname = 1;
+  string rname = 2;
+  uint32 serial = 3;
+  uint32 refresh = 4;
+  uint32 retry = 5;
+  uint32 expire = 6;
+  uint32 ttl = 7;
+}
+
+// MX record for gRPC.
+message MX {
+  uint16 priority = 1;
+  string target = 2;
+}
+
+// SRV record for gRPC.
+message SRV {
+  uint16 priority = 1;
+  uint16 weight = 2;
+  uint16 port = 3;
+  string target = 4;
+}
+
+// DNSKEY record for gRPC.
+message DNSKEY {
+  string name = 1;
+  uint16 flags = 2;
+  uint8 protocol = 3;
+  uint8 algorithm = 4;
+  string public_key = 5;
+}
